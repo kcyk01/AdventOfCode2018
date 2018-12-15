@@ -198,7 +198,7 @@ def simulate() -> str:
         monsters = sorted(Monster.monsters.items(), key=lambda kv: (kv[0][1], kv[0][0]))
         i, cannot_move = 0, 0
         for i, (pos, monster) in enumerate(monsters):
-            if pos not in Monster.monsters:
+            if monster.hp <= 0:
                 # Already dead, skip
                 continue
 
