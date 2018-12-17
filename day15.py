@@ -240,6 +240,19 @@ def day15b(puzzle_input: str) -> str:
         dmg += 1
 
 
+def debug():
+    temp_terrain = [t[:] for t in terrain]
+    by_y = defaultdict(list)
+    for m in Monster.monsters.values():
+        temp_terrain[m.y][m.x] = 'E' if type(m) == Elf else 'G'
+        by_y[m.y].append(m)
+    for i, row in enumerate(temp_terrain):
+        print(''.join(row), end='\t')
+        ms = ['G({})'.format(m.hp) if type(m) == Goblin else 'E({})'.format(m.hp) for m in sorted(by_y[i], key=lambda m: m.x)]
+        print(','.join(ms))
+    print()
+
+
 if __name__ == '__main__':
     day15_input = get_input('day15.txt')
     print(day15a(day15_input))
