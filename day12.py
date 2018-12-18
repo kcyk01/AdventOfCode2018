@@ -45,7 +45,51 @@ class Pot:
         self.state = Pot.rules[state_str] if state_str in Pot.rules else '.'
 
 
-def day12a(puzzle_input: str) -> int:
+def simulate(n: int) -> int:
+    global first, last
+    i = 0
+    sequence = []
+    while i < n:
+        node = first
+        while node:
+            node.spread()
+            node = node.right
+        first.pad_left()
+        last.pad_right()
+
+        if n > 1000:
+            # Look for patterns/cycles to skip simulation and use the cycle to predict the target result
+            sequence.append(compute_result(first))
+            cycle = find_cycle(sequence)
+            if cycle > 0:
+                # Add the cycle to skip remaining simulation
+                return (n - i - 1) * cycle + compute_result(first)
+
+        i += 1
+
+    return compute_result(first)
+
+
+def compute_result(start) -> int:
+    s, node = 0, start
+    while node:
+        s += node.pos if node.state == '#' else 0
+        node = node.right
+    return s
+
+
+def find_cycle(sequence: list) -> int:
+    if len(sequence) > 100:
+        # Sequence of at least 100 numbers, check the difference between the values
+        first_deriv = [sequence[i] - sequence[i - 1] for i in range(1, len(sequence))]
+        second_deriv = [first_deriv[i] - first_deriv[i - 1] for i in range(1, len(first_deriv))]
+        if second_deriv[-50:] == [0] * 50:
+            # Second derivative 0, constant rate of change between values
+            return first_deriv[-1]
+    return -1
+
+
+def init(puzzle_input: str):
     global first, last
     m = re.search(r'initial state: ([.#]+)', puzzle_input)
     start, node = None, None
@@ -65,36 +109,17 @@ def day12a(puzzle_input: str) -> int:
     for rule in rules:
         Pot.rules[rule[0]] = rule[1]
 
-    simulate(20)
-    return compute_result(first)
 
-
-def simulate(n: int):
+def day12a(puzzle_input: str) -> int:
     global first, last
-    for i in range(n):
-        node = first
-        while node:
-            node.spread()
-            node = node.right
-        first.pad_left()
-        last.pad_right()
-
-
-def compute_result(start) -> int:
-    s, node = 0, start
-    while node:
-        s += node.pos if node.state == '#' else 0
-        node = node.right
-    return s
+    init(puzzle_input)
+    return simulate(20)
 
 
 def day12b(puzzle_input: str) -> int:
     global first, last
-    # Simulate another 80 more generations
-    simulate(80)
-
-    # Pattern after about 100 generations
-    return (50000000000 - 100) * 80 + compute_result(first)
+    init(puzzle_input)
+    return simulate(50000000000)
 
 
 if __name__ == '__main__':
