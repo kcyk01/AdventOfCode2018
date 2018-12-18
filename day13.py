@@ -113,6 +113,16 @@ def day13b(puzzle_input: str) -> str:
     return '{},{}'.format(last_cart_position[0], last_cart_position[1])
 
 
+def debug():
+    global tracks
+    temp_tracks = [list(t) for t in tracks]
+    for pos, cart in carts_by_positions.items():
+        temp_tracks[pos[1]][pos[0]] = '<^>v'[cart.direction]
+    for row in temp_tracks:
+        print(''.join(row))
+    print()
+
+
 if __name__ == '__main__':
     day13_input = get_input('day13.txt')
     print(day13a(day13_input))

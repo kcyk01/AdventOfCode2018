@@ -10,6 +10,26 @@ names = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
 points = {}
 
 
+def find_closest(i: int, j: int) -> str:
+    global points
+    lowest, minimum = '.', size
+    for name, point in points.items():
+        dist = abs(point[0] - j) + abs(point[1] - i)
+        if dist == minimum:
+            lowest = '.'
+        if dist < minimum:
+            lowest, minimum = name, dist
+    return lowest
+
+
+def sum_distances(i: int, j: int) -> int:
+    global points
+    s = 0
+    for name, point in points.items():
+        s += abs(point[0] - j) + abs(point[1] - i)
+    return 1 if s < 10000 else 0
+
+
 def day6a(puzzle_input: str) -> int:
     global size, offset, names, points
     matrix = [['' for _ in range(size)] for _ in range(size)]
@@ -33,18 +53,6 @@ def day6a(puzzle_input: str) -> int:
     return max(counts.items(), key=lambda kv: kv[1])[1]
 
 
-def find_closest(i: int, j: int) -> str:
-    global points
-    lowest, minimum = '.', size
-    for name, point in points.items():
-        dist = abs(point[0] - j) + abs(point[1] - i)
-        if dist == minimum:
-            lowest = '.'
-        if dist < minimum:
-            lowest, minimum = name, dist
-    return lowest
-
-
 def day6b(puzzle_input: str) -> int:
     global size, points
     matrix = [[0 for _ in range(size)] for _ in range(size)]
@@ -54,12 +62,10 @@ def day6b(puzzle_input: str) -> int:
     return sum([sum(row) for row in matrix])
 
 
-def sum_distances(i: int, j: int) -> int:
-    global points
-    s = 0
-    for name, point in points.items():
-        s += abs(point[0] - j) + abs(point[1] - i)
-    return 1 if s < 10000 else 0
+def debug(matrix):
+    for row in matrix:
+        print(''.join(row))
+    print()
 
 
 if __name__ == '__main__':
